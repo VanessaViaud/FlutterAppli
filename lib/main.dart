@@ -41,6 +41,21 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+class ContributionPage extends StatelessWidget {
+  const ContributionPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Page de contribution',
+        style: TextStyle(fontSize: 20, color: Colors.indigo),
+      ),
+    );
+  }
+}
+
+
 class _MyHomePageState extends State<MyHomePage> {
   List<Project> projects = [
     Project('Projet Un', "C'est un premier projet"),
@@ -51,6 +66,26 @@ class _MyHomePageState extends State<MyHomePage> {
     Project('Projet Six', "C'est un sixième projet"),
   ];
 
+  int _selectedIndex = 0;
+
+  void _incrementProjects() {
+    int projectNumber = 0;
+    var P = Project('New Project', 'Project au clic n° $projectNumber');
+    setState(() {
+      projectNumber++;
+      projects.add(P);
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if (_selectedIndex != 0) {
+      //si on clique sur l'onglet "Contribuer", le widget "ContributionPage" doit s'afficher au lieu de la liste des projets
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: Column(
+      body:_selectedIndex == 0
+          ? Column(
         children: <Widget>[
           ListView.builder(
             shrinkWrap: true,
@@ -95,14 +131,18 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
+              ): const ContributionPage(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementProjects,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black87,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey.shade600,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.folder_copy_outlined),
@@ -113,8 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Contribuer',
           ),
         ],
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey.shade600,
       ),
     );
   }
