@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'DetailPage.dart';
 import 'ContributionPage.dart';
 import 'models/Project.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,12 +44,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Project> projects = [
-    Project('Projet Un', "C'est un premier projet"),
-    Project('Projet Deux', "C'est un second projet"),
-    Project('Projet Trois', "C'est un troisième projet"),
-    Project('Projet Quatre', "C'est un quatrième projet"),
-    Project('Projet Cinq', "C'est un cinquième projet"),
-    Project('Projet Six', "C'est un sixième projet"),
+    Project('Projet Un', "C'est un premier projet", "en Cours", DateTime.now()),
+    Project(
+      'Projet Deux',
+      "C'est un second projet",
+      "en Cours",
+      DateTime.now(),
+    ),
+    Project(
+      'Projet Trois',
+      "C'est un troisième projet",
+      "en Cours",
+      DateTime.now(),
+    ),
   ];
 
   int _selectedIndex = 0;
@@ -57,7 +65,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementProjects() {
     setState(() {
       projectNumber++;
-      projects.add(Project('New Project', 'Project au clic n° $projectNumber'));
+      projects.add(
+        Project(
+          'New Project',
+          'Project au clic n° $projectNumber',
+          "A venir",
+          DateTime.now(),
+        ),
+      );
     });
   }
 
@@ -72,54 +87,87 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(FontAwesomeIcons.rocket, color: Colors.white),
-        title:_selectedIndex == 0 ? Text(widget.title) : Text("Contribuer"),
+        title: _selectedIndex == 0 ? Text(widget.title) : Text("Contribuer"),
         centerTitle: true,
       ),
       body: _selectedIndex == 0
           ? Column(
               children: <Widget>[
-                ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(15),
-                  itemCount: projects.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Container(
-                        decoration: BoxDecoration(color: Colors.black87),
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.folder_outlined,
-                            color: Colors.indigo,
-                          ),
-                          title: Text(
-                            projects[index].title,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          subtitle: Text(
-                            projects[index].desc,
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                          // trailing: IconButton(
-                          //   onPressed: DetailPageState(),
-                          //   icon: Icon(
-                          //     Icons.arrow_forward_ios,
-                          //     color: Colors.white54,
-                          //   ),
-                          // ),
+                Expanded(
+                  child: ListView.builder(
+                    // shrinkWrap: true,
+                    padding: EdgeInsets.all(15),
+                    itemCount: projects.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                    );
-                  },
+                        clipBehavior: Clip.antiAlias,
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.black87),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.folder_outlined,
+                              color: Colors.indigo,
+                            ),
+                            title: Text(
+                              projects[index].title,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  projects[index].desc,
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                                Text(
+                                  projects[index].dateTime != null
+                                      ? DateFormat(
+                                          'dd/MM/yyyy',
+                                        ).format(projects[index].dateTime!)
+                                      : 'Date non renseignée',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                                Text(
+                                  projects[index].status,
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              ],
+                            ),
+                            // trailing: IconButton(
+                            //   onPressed: DetailPageState(),
+                            //   icon: Icon(
+                            //     Icons.arrow_forward_ios,
+                            //     color: Colors.white54,
+                            //   ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white54,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             )
-          : const ContributionPage(),
+          : ContributionPage(
+              projects: projects,
+              onAddProject: (Project project) {
+                setState(() {
+                  projects.add(project);
+                  _selectedIndex = 0;
+                });
+              },
+            ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementProjects,

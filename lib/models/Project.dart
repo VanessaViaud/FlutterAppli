@@ -3,20 +3,24 @@
 class Project {
   String _title;
   String _desc;
+  DateTime? _dateTime;
+  String _status;
 
-  Project(this._title, this._desc);
+  Project(this._title, this._desc,  this._status, [this._dateTime]);
 
   String get title => _title;
+
   String get desc => _desc;
 
+  DateTime? get dateTime => _dateTime;
+
+  String get status => _status;
+
   set title(String value) => _title = value;
+
   set desc(String value) => _desc = value;
+
+  set dateTime(DateTime value) => _dateTime = value;
+
+  set status(String value) => _status = value;
 }
-
-
-
-
-//il faut utiliser ListView pour affihcer la liste des projets. Attention il faut un contructeur spécifique et pas
-//n'importe quel listview : celle qui va lister des listtile
-//ou utiliser listview avec des card (on peut les mettre dans les listvew)
-//attention : comme on fait ça avec des objets, la liste doit être dynamique donc faut la faire avec un builder : listview.builder
