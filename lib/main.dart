@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo.shade400),
-        scaffoldBackgroundColor: Colors.grey.shade400,
+        scaffoldBackgroundColor: Colors.grey.shade300,
         appBarTheme: AppBarTheme(
           foregroundColor: Colors.white,
           backgroundColor: Colors.indigo.shade700,
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(FontAwesomeIcons.rocket, color: Colors.white),
-        title: Text(widget.title),
+        title:_selectedIndex == 0 ? Text(widget.title) : Text("Contribuer"),
         centerTitle: true,
       ),
       body: _selectedIndex == 0
@@ -120,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             )
           : const ContributionPage(),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementProjects,
         tooltip: 'Increment',
