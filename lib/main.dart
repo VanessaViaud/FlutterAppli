@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'DetailPage.dart';
 import 'ContributionPage.dart';
 import 'models/Project.dart';
 
@@ -18,13 +18,12 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo.shade400),
         scaffoldBackgroundColor: Colors.grey.shade400,
         appBarTheme: AppBarTheme(
           foregroundColor: Colors.white,
           backgroundColor: Colors.indigo.shade700,
           shadowColor: Colors.black,
-
           elevation: 5,
         ),
       ),
@@ -56,10 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
   late int projectNumber = projects.length + 1;
 
   void _incrementProjects() {
-    var P = Project('New Project', 'Project au clic n° $projectNumber');
     setState(() {
       projectNumber++;
-      projects.add(P);
+      projects.add(Project('New Project', 'Project au clic n° $projectNumber'));
     });
   }
 
@@ -107,11 +105,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             projects[index].desc,
                             style: TextStyle(color: Colors.white70),
                           ),
-
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white54,
-                          ),
+                          // trailing: IconButton(
+                          //   onPressed: DetailPageState(),
+                          //   icon: Icon(
+                          //     Icons.arrow_forward_ios,
+                          //     color: Colors.white54,
+                          //   ),
+                          // ),
                         ),
                       ),
                     );
@@ -123,7 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementProjects,
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.indigo,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black87,
