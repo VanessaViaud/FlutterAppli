@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'ContributionPage.dart';
 import 'models/Project.dart';
 
 void main() {
@@ -41,21 +42,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class ContributionPage extends StatelessWidget {
-  const ContributionPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Page de contribution',
-        style: TextStyle(fontSize: 20, color: Colors.indigo),
-      ),
-    );
-  }
-}
-
-
 class _MyHomePageState extends State<MyHomePage> {
   List<Project> projects = [
     Project('Projet Un', "C'est un premier projet"),
@@ -67,9 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   int _selectedIndex = 0;
+  late int projectNumber = projects.length + 1;
 
   void _incrementProjects() {
-    int projectNumber = 0;
     var P = Project('New Project', 'Project au clic n° $projectNumber');
     setState(() {
       projectNumber++;
@@ -81,9 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _selectedIndex = index;
     });
-    if (_selectedIndex != 0) {
-      //si on clique sur l'onglet "Contribuer", le widget "ContributionPage" doit s'afficher au lieu de la liste des projets
-    }
   }
 
   @override
@@ -94,44 +77,49 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body:_selectedIndex == 0
+      body: _selectedIndex == 0
           ? Column(
-        children: <Widget>[
-          ListView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.all(15),
-            itemCount: projects.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              children: <Widget>[
+                ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(15),
+                  itemCount: projects.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 4,
+                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.black87),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.folder_outlined,
+                            color: Colors.indigo,
+                          ),
+                          title: Text(
+                            projects[index].title,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          subtitle: Text(
+                            projects[index].desc,
+                            style: TextStyle(color: Colors.white70),
+                          ),
+
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white54,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                clipBehavior: Clip.antiAlias,
-                elevation: 4,
-                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Container(
-                  decoration: BoxDecoration(color: Colors.black87),
-                  child: ListTile(
-                    leading: Icon(Icons.folder_outlined, color: Colors.indigo),
-                    title: Text(
-                      projects[index].title,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    subtitle: Text(
-                      projects[index].desc,
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white54,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-              ): const ContributionPage(),
+              ],
+            )
+          : const ContributionPage(),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementProjects,
         tooltip: 'Increment',
