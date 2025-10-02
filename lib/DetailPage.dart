@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'models/Project.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:management_flutter_application/main.dart';
+import 'package:management_flutter_application/models/Project.dart';
 
 class DetailPage extends StatelessWidget {
   final Project project;
@@ -19,11 +21,8 @@ class DetailPage extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.mode_edit_outlined, color: Colors.white),
-            tooltip: 'Show Snackbar',
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('This is a snackbar')),
-              );
+              context.push('/edit', extra: ScreenArguments(project));
             },
           ),
         ],
@@ -39,8 +38,7 @@ class DetailPage extends StatelessWidget {
             Text('Statut : ' + project.status),
             Text(
               project.dateTime != null
-                  ? 'Date de début : ' +
-                        DateFormat('dd/MM/yyyy').format(project.dateTime!)
+                  ? 'Date de début : ' + DateFormat('dd/MM/yyyy').format(project.dateTime!)
                   : 'Date de début non renseignée',
             ),
           ],
