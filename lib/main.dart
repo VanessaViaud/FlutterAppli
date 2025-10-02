@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:management_flutter_application/EditPage.dart';
 import 'package:management_flutter_application/models/EditForm.dart';
 import 'DetailPage.dart';
 import 'ContributionPage.dart';
@@ -19,7 +20,10 @@ class ScreenArguments {
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => MyHomePage()),
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const MyHomePage(),
+    ),
     GoRoute(
       path: '/details',
       builder: (context, state) {
@@ -27,11 +31,29 @@ final GoRouter _router = GoRouter(
         return DetailPage(project: args.project);
       },
     ),
-    GoRoute(path: '/edit',
-    builder: (context, state) {
-      final args = state.extra as ScreenArguments;
-      return ProjectForm(onSubmit: (Project p1) {  },);
-    })
+    GoRoute(
+      path: '/edit',
+      builder: (context, state) {
+        final args = state.extra as ScreenArguments;
+        return EditProjectPage(
+          project: args.project,
+          onUpdateProject: (updatedProject) {
+            Navigator.of(context).pop(updatedProject);
+          },
+        );
+      },
+    ),
+    GoRoute(
+      path: '/add',
+      builder: (context, state) {
+        return ContributionPage(
+          projects: [],
+          onAddProject: (Project p1) {
+            Navigator.of(context).pop(p1);
+          },
+        );
+      },
+    ),
   ],
 );
 
@@ -69,18 +91,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Project> projects = [
     Project('Projet Un', "C'est un premier projet", "en Cours", DateTime.now()),
-    Project(
-      'Projet Deux',
-      "C'est un second projet",
-      "en Cours",
-      DateTime.now(),
-    ),
-    Project(
-      'Projet Trois',
-      "C'est un troisième projet",
-      "en Cours",
-      DateTime.now(),
-    ),
+    Project('Projet Deux', "C'est un second projet", "en Cours", DateTime.now()),
+    Project('Projet Trois', "C'est un troisième projet", "en Cours", DateTime.now()),
   ];
 
   int _selectedIndex = 0;
@@ -106,99 +118,99 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _editProject(Project project, int index) async {
+    final updatedProject = await context.push<Project>(
+      '/edit',
+      extra: ScreenArguments(project),
+    );
+
+    if (updatedProject != null) {
+      setState(() {
+        projects[index] = updatedProject;
+      });
+    }
+  }
+
+  Future<void> _addProject() async {
+    final newProject = await context.push<Project>('/add');
+    if (newProject != null) {
+      setState(() {
+        projects.add(newProject);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(FontAwesomeIcons.rocket, color: Colors.white),
-        title: _selectedIndex == 0 ? Text('Projets') : Text("Contribuer"),
+        title: _selectedIndex == 0 ? const Text('Projets') : const Text("Contribuer"),
         centerTitle: true,
       ),
       body: _selectedIndex == 0
-          ? Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    // shrinkWrap: true,
-                    padding: EdgeInsets.all(15),
-                    itemCount: projects.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        elevation: 4,
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(color: Colors.black87),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.folder_outlined,
-                              color: Colors.indigo,
-                            ),
-                            title: Text(
-                              projects[index].title,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  projects[index].desc,
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                                Text(
-                                  projects[index].dateTime != null
-                                      ? DateFormat(
-                                          'dd/MM/yyyy',
-                                        ).format(projects[index].dateTime!)
-                                      : 'Date non renseignée',
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                                Text(
-                                  projects[index].status,
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                              ],
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {
-                                context.push(
-                                  '/details',
-                                  extra: ScreenArguments(projects[index]),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white54,
-                              ),
-                              // trailing: Icon(
-                              //   Icons.arrow_forward_ios,
-                              //   color: Colors.white54,
-                              // ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            )
-          : ContributionPage(
-              projects: projects,
-              onAddProject: (Project project) {
-                setState(() {
-                  projects.add(project);
-                  _selectedIndex = 0;
-                });
-              },
+          ? ListView.builder(
+        padding: const EdgeInsets.all(15),
+        itemCount: projects.length,
+        itemBuilder: (BuildContext context, int index) {
+          final project = projects[index];
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-
+            clipBehavior: Clip.antiAlias,
+            elevation: 4,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              decoration: BoxDecoration(color: Colors.black87),
+              child: ListTile(
+                leading: const Icon(Icons.folder_outlined, color: Colors.indigo),
+                title: Text(project.title, style: const TextStyle(color: Colors.white)),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(project.desc, style: const TextStyle(color: Colors.white70)),
+                    Text(
+                      project.dateTime != null
+                          ? DateFormat('dd/MM/yyyy').format(project.dateTime!)
+                          : 'Date non renseignée',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                    Text(project.status, style: const TextStyle(color: Colors.white70)),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => _editProject(project, index),
+                      icon: const Icon(Icons.edit, color: Colors.white54),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        context.push(
+                          '/details',
+                          extra: ScreenArguments(project),
+                        );
+                      },
+                      icon: const Icon(Icons.arrow_forward_ios, color: Colors.white54),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      )
+          : ContributionPage(
+        projects: projects,
+        onAddProject: (newProject) {
+          setState(() {
+            projects.add(newProject);
+            _selectedIndex = 0;
+          });
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementProjects,
         tooltip: 'Increment',
