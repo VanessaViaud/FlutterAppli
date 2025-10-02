@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:management_flutter_application/models/EditForm.dart';
 import 'DetailPage.dart';
 import 'ContributionPage.dart';
 import 'models/Project.dart';
@@ -9,12 +11,36 @@ void main() {
   runApp(const MyApp());
 }
 
+class ScreenArguments {
+  final Project project;
+
+  ScreenArguments(this.project);
+}
+
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => MyHomePage()),
+    GoRoute(
+      path: '/details',
+      builder: (context, state) {
+        final args = state.extra as ScreenArguments;
+        return DetailPage(project: args.project);
+      },
+    ),
+    GoRoute(path: '/edit',
+    builder: (context, state) {
+      final args = state.extra as ScreenArguments;
+      return ProjectForm(onSubmit: (Project p1) {  },);
+    })
+  ],
+);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -28,15 +54,13 @@ class MyApp extends StatelessWidget {
           elevation: 5,
         ),
       ),
-      home: const MyHomePage(title: 'Mes projets'),
+      routerConfig: _router,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -87,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(FontAwesomeIcons.rocket, color: Colors.white),
-        title: _selectedIndex == 0 ? Text(widget.title) : Text("Contribuer"),
+        title: _selectedIndex == 0 ? Text('Projets') : Text("Contribuer"),
         centerTitle: true,
       ),
       body: _selectedIndex == 0
@@ -141,15 +165,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ],
                             ),
-                            // trailing: IconButton(
-                            //   onPressed: DetailPageState(),
-                            //   icon: Icon(
-                            //     Icons.arrow_forward_ios,
-                            //     color: Colors.white54,
-                            //   ),
-                            trailing: Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white54,
+                            trailing: IconButton(
+                              onPressed: () {
+                                context.push(
+                                  '/details',
+                                  extra: ScreenArguments(projects[index]),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white54,
+                              ),
+                              // trailing: Icon(
+                              //   Icons.arrow_forward_ios,
+                              //   color: Colors.white54,
+                              // ),
                             ),
                           ),
                         ),

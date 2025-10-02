@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
+import 'models/EditForm.dart';
 import 'models/Project.dart';
 
 class ContributionPage extends StatefulWidget {
@@ -59,125 +60,6 @@ class _ContributionPageState extends State<ContributionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Form(
-        key: _key,
-        child: ListView(
-          padding: EdgeInsets.all(30),
-          children: [
-            TextFormField(
-              controller: _nom,
-              decoration: InputDecoration(
-                labelText: 'nom',
-                hintText: 'Veuillez saisir un nom de projet',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Champ obligatoire";
-                }
-                if (!RegExp(r'^[A-Za-z0-9]+$').hasMatch(value)) {
-                  return "Veuillez saisir un nom sans espace ni caractères spéciaux";
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _description,
-              decoration: InputDecoration(
-                labelText: 'description',
-                hintText: 'Décrivez votre projet',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.multiline,
-              minLines: 4,
-              maxLines: 8,
-            ),
-            SizedBox(height: 20),
-
-            DropdownButton(
-              underline: Container(height: 1, color: Colors.black54),
-              value: _dropDownValue,
-              items: const [
-                DropdownMenuItem(
-                  value: Status.enCours,
-                  child: Text('    en cours'),
-                ),
-                DropdownMenuItem(
-                  value: Status.aVenir,
-                  child: Text('    à venir'),
-                ),
-                DropdownMenuItem(
-                  value: Status.termine,
-                  child: Text('    terminé'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  print(_dropDownValue);
-                  _dropDownValue = value;
-                });
-              },
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Date de début',
-                suffixIcon: Icon(Icons.calendar_today),
-              ),
-              controller: _dateController,
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: selectedDate ?? DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(2030, 12, 31),
-                );
-                if (pickedDate != null) {
-                  setState(() {
-                    selectedDate = pickedDate;
-                    _dateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
-                  });
-                }
-              },
-            ),
-
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo.shade400,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    action: SnackBarAction(
-                      label: "Confirmer",
-                      onPressed: _onSubmit,
-                    ),
-                    content: Text('Vous êtes sûr ?'),
-                    padding: EdgeInsets.all(10),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                );
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(FontAwesomeIcons.paperPlane),
-                  SizedBox(width: 20),
-                  Text('Enregistrer'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return ProjectForm(onSubmit: (Project p1) {  },);
   }
 }
