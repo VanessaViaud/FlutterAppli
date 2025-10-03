@@ -8,7 +8,7 @@ class Project {
   String _desc;
   DateTime? _dateTime;
   String _status;
-  List<Task> _tasks;
+  List<Task> _tasks = [];
 
   Project(this._title, this._desc,  this._status, this._tasks, [this._dateTime]);
 

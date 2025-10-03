@@ -120,7 +120,7 @@ class _DetailPageState extends State<DetailPage> {
                             subtitle: Text(
                               task.completed
                                   ? "Tâche complétée"
-                                  : "Tâche à faire",
+                                  : "A faire",
                               style: TextStyle(
                                 color: task.completed
                                     ? Colors.green
@@ -140,34 +140,76 @@ class _DetailPageState extends State<DetailPage> {
                               children: [
                                 IconButton(
                                   icon: Icon(
-                                    task.completed ? Icons.cached : Icons.check,
-                                    color: task.completed
-                                        ? Colors.grey
-                                        : Colors.orangeAccent,
+                                    task.completed ? Icons.undo : Icons.check,
+                                    color: task.completed ? Colors.orange : Colors.green,
                                   ),
-                                  tooltip: task.completed
-                                      ? "Restaurer"
-                                      : "Clore",
+                                  tooltip: task.completed ? "Restaurer" : "Clore",
                                   onPressed: () {
                                     setState(() {
                                       task.completed = !task.completed;
                                     });
                                   },
                                 ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Colors.indigo.shade400,
-                                  ),
-                                  tooltip: "Supprimer",
-                                  onPressed: () {
-                                    setState(() {
-                                      tasks.removeAt(index);
-                                    });
+
+                                PopupMenuButton<String>(
+                                  color: Colors.indigo.shade400,
+
+                                  onSelected: (value) async {
+                                    if (value == 'edit') {
+                                      final newTitle = await showDialog<String>(
+                                        context: context,
+                                        builder: (context) {
+                                          String editedTitle = task.title;
+                                          return AlertDialog(
+                                            title: const Text('Modifier la tâche'),
+                                            content: TextField(
+                                              autofocus: true,
+                                              onChanged: (nouveauTitre) => editedTitle = nouveauTitre,
+                                              controller: TextEditingController(text: task.title),
+                                              decoration: const InputDecoration(
+                                                hintText: 'Nouveau titre',
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.of(context).pop(null),
+                                                child: const Text('Annuler'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.of(context).pop(editedTitle),
+                                                child: const Text('Valider'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+
+                                      if (newTitle != null && newTitle.trim().isNotEmpty) {
+                                        setState(() {
+                                          task.title = newTitle.trim();
+                                        });
+                                      }
+                                    } else if (value == 'delete') {
+                                      setState(() {
+                                        tasks.removeAt(tasks.indexOf(task));
+                                      });
+                                    }
                                   },
+                                  itemBuilder: (context) => [
+                                    const PopupMenuItem(
+                                      value: 'edit',
+                                      child: Text('Modifier', style: TextStyle(color: Colors.white70)),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: 'delete',
+                                      child: Text('Supprimer', style: TextStyle(color: Colors.white70)),
+                                    ),
+                                  ],
+                                  icon: const Icon(Icons.more_vert, color: Colors.indigoAccent),
                                 ),
                               ],
                             ),
+
                           ),
                         );
                       },
