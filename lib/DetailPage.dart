@@ -80,16 +80,21 @@ class _DetailPageState extends State<DetailPage> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  Text('Description : ' + widget.project.desc),
+                  Text('Description : ${widget.project.desc}'),
                   const SizedBox(height: 8),
-                  Text('Statut : ' + widget.project.status),
+                  Text(
+                    'Statut : ${widget.project.status}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: widget.project.status == 'Terminé' ? Colors.green : Colors.orangeAccent,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     widget.project.dateTime != null
-                        ? 'Date de début : ' +
-                              DateFormat(
+                        ? 'Date de début : ${DateFormat(
                                 'dd/MM/yyyy',
-                              ).format(widget.project.dateTime!)
+                              ).format(widget.project.dateTime!)}'
                         : 'Date de début non renseignée',
                   ),
                   const SizedBox(height: 20),
@@ -100,31 +105,49 @@ class _DetailPageState extends State<DetailPage> {
                       itemBuilder: (context, index) {
                         final task = tasks[index];
                         return Card(
+                          color: Colors.black87,
                           child: ListTile(
                             title: Text(
                               task.title,
                               style: TextStyle(
+                                color: Colors.grey,
                                 decoration: task.completed
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
+                                decorationColor: Colors.white70,
                               ),
                             ),
                             subtitle: Text(
-                              task.completed ? "Tâche complétée" : "Tâche à faire",
+                              task.completed
+                                  ? "Tâche complétée"
+                                  : "Tâche à faire",
+                              style: TextStyle(
+                                color: task.completed
+                                    ? Colors.green
+                                    : Colors.orangeAccent,
+                              ),
                             ),
                             leading: Icon(
-                              task.completed ? Icons.check_circle : Icons.circle_outlined,
-                              color: task.completed ? Colors.green : Colors.grey,
+                              task.completed
+                                  ? Icons.check_circle
+                                  : Icons.circle_outlined,
+                              color: task.completed
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   icon: Icon(
-                                    task.completed ? Icons.undo : Icons.check,
-                                    color: task.completed ? Colors.orange : Colors.green,
+                                    task.completed ? Icons.cached : Icons.check,
+                                    color: task.completed
+                                        ? Colors.grey
+                                        : Colors.orangeAccent,
                                   ),
-                                  tooltip: task.completed ? "Restaurer" : "Clore",
+                                  tooltip: task.completed
+                                      ? "Restaurer"
+                                      : "Clore",
                                   onPressed: () {
                                     setState(() {
                                       task.completed = !task.completed;
@@ -132,7 +155,10 @@ class _DetailPageState extends State<DetailPage> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.indigo.shade400,
+                                  ),
                                   tooltip: "Supprimer",
                                   onPressed: () {
                                     setState(() {
@@ -147,7 +173,6 @@ class _DetailPageState extends State<DetailPage> {
                       },
                     ),
                   ),
-
                 ],
               ),
             ),
