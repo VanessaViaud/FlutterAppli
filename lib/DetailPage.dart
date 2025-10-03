@@ -1,14 +1,55 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:management_flutter_application/main.dart';
 import 'package:management_flutter_application/models/Project.dart';
 
-class DetailPage extends StatelessWidget {
+import 'models/Task.dart';
+
+class DetailPage extends StatefulWidget {
   final Project project;
 
   const DetailPage({super.key, required this.project});
+
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  List<Task> tasks = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    apiCall();
+  }
+
+  Future<void> apiCall() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    var response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/users/1/todos'),
+    );
+
+    if (response.statusCode == 200) {
+      var jsonList = jsonDecode(response.body) as List;
+      setState(() {
+        tasks = jsonList.take(6).map((data) => Task.fromJson(data)).toList();
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+
+      print('Erreur lors de la récupération des tâches');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,28 +63,79 @@ class DetailPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.mode_edit_outlined, color: Colors.white),
             onPressed: () {
-              context.push('/edit', extra: ScreenArguments(project));
+              context.push('/edit', extra: ScreenArguments(widget.project));
             },
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(project.title),
-            Text('Description : ' + project.desc),
-            Text('Statut : ' + project.status),
-            Text(
-              project.dateTime != null
-                  ? 'Date de début : ' + DateFormat('dd/MM/yyyy').format(project.dateTime!)
-                  : 'Date de début non renseignée',
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.project.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Description : ' + widget.project.desc),
+                  const SizedBox(height: 8),
+                  Text('Statut : ' + widget.project.status),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.project.dateTime != null
+                        ? 'Date de début : ' +
+                              DateFormat(
+                                'dd/MM/yyyy',
+                              ).format(widget.project.dateTime!)
+                        : 'Date de début non renseignée',
+                  ),
+                  const SizedBox(height: 20),
+                  Divider(),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        final task = tasks[index];
+                        return Card(
+                          child: ListTile(
+                            title: task.completed
+                                ? Text(
+                                    task.title,
+                                    style: TextStyle(
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  )
+                                : Text(task.title),
+                            subtitle: Text(
+                              task.completed
+                                  ? "Tâche complétée"
+                                  : "Tâche à faire",
+                            ),
+                            leading: IconButton(
+                              icon: Icon(
+                                task.completed
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: task.completed
+                                    ? Colors.green
+                                    : Colors.grey,
+                              ), onPressed: () {
+                                setState(() {
+                                  task.completed = ! task.completed;
+                                });
+                            },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

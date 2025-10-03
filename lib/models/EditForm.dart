@@ -75,6 +75,7 @@ class _ProjectFormState extends State<ProjectForm> {
         _nomController.text,
         _descriptionController.text,
         _status != null ? _status.toString().split('.').last : 'enCours',
+        [],
         _selectedDate,
       );
       widget.onSubmit(newProject);
