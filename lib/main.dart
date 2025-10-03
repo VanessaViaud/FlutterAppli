@@ -10,9 +10,13 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'models/Task.dart';
+import 'package:provider/provider.dart';
+import 'providers/ProjectProvider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(create: (_) => ProjectProvider(),child: MyApp())
+  );
 }
 
 class ScreenArguments {
@@ -90,26 +94,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-
-
-List<Project> projects = [
-  Project(
-      'Projet Un', "C'est un premier projet", "en Cours", [], DateTime.now()),
-  Project(
-    'Projet Deux',
-    "C'est un second projet",
-    "en Cours",
-    [],
-    DateTime.now(),
-  ),
-  Project(
-    'Projet Trois',
-    "C'est un troisième projet",
-    "en Cours",
-    [],
-    DateTime.now(),
-  ),
-];
 
 int _selectedIndex = 0;
 late int projectNumber = projects.length + 1;

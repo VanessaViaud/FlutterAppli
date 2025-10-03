@@ -1,16 +1,18 @@
 //faire une classe avec 2 attributs privés title et desc donc faire des getters et setter
 
+import 'package:flutter/foundation.dart';
 import 'package:management_flutter_application/main.dart';
 import 'package:management_flutter_application/models/Task.dart';
 
 class Project {
+  Key _key;
   String _title;
   String _desc;
   DateTime? _dateTime;
   String _status;
   List<Task> _tasks = [];
 
-  Project(this._title, this._desc,  this._status, this._tasks, [this._dateTime]);
+  Project(this._key = UniqueKey(), this._title, this._desc,  this._status, this._tasks, [this._dateTime]);
 
   String get title => _title;
 

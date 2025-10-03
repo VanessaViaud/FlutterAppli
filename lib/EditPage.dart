@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:management_flutter_application/models/EditForm.dart';
 import 'package:management_flutter_application/models/Project.dart';
+import 'package:management_flutter_application/providers/ProjectProvider.dart';
+import 'package:provider/provider.dart';
 
 class EditProjectPage extends StatelessWidget {
   final Project project;
@@ -15,8 +17,7 @@ class EditProjectPage extends StatelessWidget {
       body: ProjectForm(
         initialProject: project,
         onSubmit: (updatedProject) {
-          onUpdateProject(updatedProject);
-          Navigator.pop(context);
+          Provider.of<ProjectProvider>(context).updateProject(project);
         },
       ),
     );

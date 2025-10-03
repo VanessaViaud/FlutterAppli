@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:management_flutter_application/models/Project.dart';
+import 'package:management_flutter_application/providers/ProjectProvider.dart';
+import 'package:provider/provider.dart';
 
 import 'models/EditForm.dart';
 
 class ContributionPage extends StatefulWidget {
   final List<Project> projects;
-  final void Function(Project) onAddProject;
 
-  const ContributionPage({Key? key, required this.projects, required this.onAddProject}) : super(key: key);
+  const ContributionPage({Key? key, required this.projects}) : super(key: key);
 
   @override
   State<ContributionPage> createState() => _ContributionPageState();
@@ -20,8 +22,8 @@ class _ContributionPageState extends State<ContributionPage> {
       appBar: AppBar(title: Text('Contribuer')),
       body: ProjectForm(
         onSubmit: (project) {
-          widget.onAddProject(project);
-          Navigator.pop(context);
+          Provider.of<ProjectProvider>(context, listen: false).addProject(project);
+          context.pop();
         },
       ),
     );

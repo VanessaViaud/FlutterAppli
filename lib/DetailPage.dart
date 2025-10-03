@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:management_flutter_application/main.dart';
 import 'package:management_flutter_application/models/Project.dart';
+import 'package:management_flutter_application/providers/ProjectProvider.dart';
+import 'package:provider/provider.dart';
 
 import 'models/Task.dart';
 
@@ -53,6 +55,9 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final projectProvider = Provider.of<ProjectProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -100,7 +105,7 @@ class _DetailPageState extends State<DetailPage> {
                   const SizedBox(height: 20),
                   Divider(),
                   Expanded(
-                    child: ListView.builder(
+                     child: ListView.builder(
                       itemCount: tasks.length,
                       itemBuilder: (context, index) {
                         final task = tasks[index];
