@@ -101,38 +101,53 @@ class _DetailPageState extends State<DetailPage> {
                         final task = tasks[index];
                         return Card(
                           child: ListTile(
-                            title: task.completed
-                                ? Text(
-                                    task.title,
-                                    style: TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  )
-                                : Text(task.title),
-                            subtitle: Text(
-                              task.completed
-                                  ? "Tâche complétée"
-                                  : "Tâche à faire",
+                            title: Text(
+                              task.title,
+                              style: TextStyle(
+                                decoration: task.completed
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                              ),
                             ),
-                            leading: IconButton(
-                              icon: Icon(
-                                task.completed
-                                    ? Icons.check_circle
-                                    : Icons.circle_outlined,
-                                color: task.completed
-                                    ? Colors.green
-                                    : Colors.grey,
-                              ), onPressed: () {
-                                setState(() {
-                                  task.completed = ! task.completed;
-                                });
-                            },
+                            subtitle: Text(
+                              task.completed ? "Tâche complétée" : "Tâche à faire",
+                            ),
+                            leading: Icon(
+                              task.completed ? Icons.check_circle : Icons.circle_outlined,
+                              color: task.completed ? Colors.green : Colors.grey,
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    task.completed ? Icons.undo : Icons.check,
+                                    color: task.completed ? Colors.orange : Colors.green,
+                                  ),
+                                  tooltip: task.completed ? "Restaurer" : "Clore",
+                                  onPressed: () {
+                                    setState(() {
+                                      task.completed = !task.completed;
+                                    });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  tooltip: "Supprimer",
+                                  onPressed: () {
+                                    setState(() {
+                                      tasks.removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         );
                       },
                     ),
                   ),
+
                 ],
               ),
             ),
